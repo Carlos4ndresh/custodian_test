@@ -1,0 +1,32 @@
+policies:
+  - name: offhours-stop-ec2
+    description: |
+      Shutdown all running EC2 instances that have the tag
+      `maid_offhours` applied.
+    mode:
+      type: periodic
+      schedule: "rate(1 hour)"
+      role: arn:aws:iam::762537114155:role/cloudcustodian-lambda-role
+    resource: ec2
+    filters:
+      - type: offhour
+        default_tz: America/Bogota
+        offhour: 10
+    actions:
+      - terminate
+
+  - name: onhours-start-ec2
+    description: |
+      Start all stopped EC2 instances that have the tag
+      `maid_offhours` applied.
+    mode:
+      type: periodic
+      schedule: "rate(1 hour)"
+      role: arn:aws:iam::762537114155:role/cloudcustodian-lambda-role
+    resource: ec2
+    filters:
+      - type: onhour
+        default_tz: America/Bogota
+        onhour: 9
+    actions:
+      - start
