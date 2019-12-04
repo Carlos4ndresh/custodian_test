@@ -16,7 +16,7 @@ ENV SERVICE_HOME ${SERVICE_HOME:-/${SERVICE_USER}}
 
 RUN apk add --no-cache git python3 &&\
   adduser -h ${SERVICE_HOME} -s /sbin/nologin -u 1000 -D ${SERVICE_USER} && \
-  pip3 install virtualenv && pip3 install awscli && \
+  pip3 install virtualenv && \
   virtualenv --python=python3 custodian && \
   . custodian/bin/activate && \
   pip3 install c7n
