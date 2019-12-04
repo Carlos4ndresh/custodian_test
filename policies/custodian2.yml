@@ -1,5 +1,5 @@
 policies:
-  - name: offhours-stop-ec2
+  - name: offhours-start-ec2
     description: |
       Shutdown all running EC2 instances that have the tag
       `maid_offhours` applied.
@@ -11,4 +11,4 @@ policies:
     filters:
       - type: offhour
         default_tz: America/Bogota
-        offhour: 18
+        offhour: 5

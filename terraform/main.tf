@@ -1,12 +1,9 @@
 provider "aws" {
     region = "us-west-2"
     profile = "endava"  
+    # TODO put assume role
 }
 
-
-# Resources needed for cloudcustodian
-## IAM Role for Lambdas to control other resources
-### S3 or EBS? To store cloudcustodian execution logs, besides cloudwatch access in the previous pint
 
 resource "aws_iam_role" "cloudcustodian_lambda_role" {
   name = "cloudcustodian_lambda_role"
@@ -35,6 +32,24 @@ POLICY
 }
 
 
-data "aws_iam_policy" "example" {
+// TODO Restrict more Permissions to cloudcustodian
+resource "aws_iam_policy" "lambda_policy" {
+  name = "cloudcustodian-lambda-policy"
   policy = file("./iampolicy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "custodian_policy_attachment" {
+  role       = "${aws_iam_role.cloudcustodian_lambda_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_policy.arn}"
+}
+
+resource "aws_s3_bucket" "cloudcustodian_bucket" {
+  bucket = "cloudcustodian-lambda-bucket-logs"
+  acl    = "private"
+
+  tags = {
+      owner = "cherrera",
+      cost-center= "cherrera",
+      app-name = "cloudcustodian"
+  }
 }
