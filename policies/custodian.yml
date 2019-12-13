@@ -6,9 +6,11 @@ policies:
     mode:
       type: periodic
       schedule: "rate(1 hour)"
-      role: the_cloudcustodian_lambda_role
+      role: arn:aws:iam::762537114155:role/cloudcustodian_lambda_role
     resource: ec2
     filters:
       - type: offhour
         default_tz: America/Bogota
         offhour: 18
+    actions:
+      - stop

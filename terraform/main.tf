@@ -46,10 +46,23 @@ resource "aws_iam_role_policy_attachment" "custodian_policy_attachment" {
 resource "aws_s3_bucket" "cloudcustodian_bucket" {
   bucket = "cloudcustodian-lambda-bucket-logs"
   acl    = "private"
+  force_destroy = true
 
   tags = {
       owner = "cherrera",
       cost-center= "cherrera",
       app-name = "cloudcustodian"
+  }
+}
+
+
+resource "null_resource" "test_custodian" {
+  depends_on = [aws_iam_role.cloudcustodian_lambda_role]
+  provisioner "local-exec" {
+    command = "virtualenv --python=python3.7 custodian && source custodian/bin/activate &&  pip install c7n && custodian run -s s3://cloudcustodian-lambda-bucket-logs ../policies/* "
+  }
+  provisioner "local-exec" {
+    when = "destroy"
+    command = "echo Invoking cleanup lambda"
   }
 }
